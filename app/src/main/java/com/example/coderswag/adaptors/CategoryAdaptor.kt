@@ -15,19 +15,25 @@ class CategoryAdaptor(val context: Context, val categories: List<Category>) : Ba
     @SuppressLint("ViewHolder", "InflateParams")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val categoryView : View
+        val holder : ViewHolder
 
-        categoryView = LayoutInflater.from(context).inflate(R.layout.category_list_item, null)
-        val categoryImage : ImageView = categoryView.findViewById(R.id.categoryimage)
-        val categoryName : TextView = categoryView.findViewById(R.id.categoryname)
-        // println(categoryName)
-        //println(position)
-        println(categories)
+        if(convertView == null){
+            categoryView = LayoutInflater.from(context).inflate(R.layout.category_list_item, null)
+            holder = ViewHolder()
+            holder.categoryImage = categoryView.findViewById(R.id.categoryimage)
+            holder.categoryName = categoryView.findViewById(R.id.categoryname)
+            categoryView.tag = holder
+            //println("1st")
+        } else{
+            holder = convertView.tag as ViewHolder
+            categoryView = convertView
+            //println("Recycle")
+        }
+
         val category = categories[position]
         val resourceID = context.resources.getIdentifier(category.image, "drawable", context.packageName)
-        //println(context.packageName)
-        categoryImage.setImageResource(resourceID)
-        // println(resourceID)
-        categoryName.text = category.title
+        holder.categoryImage?.setImageResource(resourceID)
+        holder.categoryName?.text = category.title
 
         return categoryView
     }
@@ -43,4 +49,10 @@ class CategoryAdaptor(val context: Context, val categories: List<Category>) : Ba
     override fun getCount(): Int {
         return categories.count()
     }
+
+    private class ViewHolder {
+        var categoryName : TextView? = null
+        var categoryImage : ImageView? = null
+    }
+
 }
